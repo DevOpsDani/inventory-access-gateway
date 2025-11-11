@@ -1,5 +1,5 @@
 # Inventory Access Gateway
-Token-based gateway that enables secure, authenticated access to the Inventory Service.
+Token-based gateway that enables secure, authenticated access to the Inventory Service
 
 ## 1. High-Level System Design
 
@@ -97,7 +97,7 @@ sequenceDiagram
 
 ### Authorization & RBAC
 - **User Groups**: Role-based access through Cognito User Groups
-- **AppSync Schema**: Fine-grained authorization using @aws_auth to ensure users can only query data allowed for their assigned group.
+- **AppSync Schema**: Fine-grained authorization using @aws_auth to ensure users can only query data allowed for their assigned group
 
 ### Token Lifecycle Management
 - **Expiration**: Configurable token TTL (default: 1 hour access, 30 days refresh)
@@ -158,22 +158,21 @@ flowchart LR
 
 ### Observability Stack
 - **Metrics**: CloudWatch custom metrics for API performance and usage
-- **Logging**: Collect and centralize application\appsync\cognito logs for monitoring and troubleshooting. 
+- **Logging**: Collect and centralize application\appsync\cognito logs for monitoring and troubleshooting
 - **Alerting**: Automated alerts for error rates, latency, and security events
 
 ### Secrets Management
-- **AWS Secrets Manager**: Securely store and manage database credentials, API keys, and other sensitive configuration data.
+- **AWS Secrets Manager**: Securely store and manage database credentials, API keys, and other sensitive configuration data
 
 ## 4. Scalability & Extensibility
 
 ### Multi-Tenant Support
-- **Tenant Isolation**: After a user signs up, a tenant identifier is sent to a Post Confirmation Lambda, which automatically assigns the user to the appropriate Cognito group. This ensures each user is linked to the correct tenant, enabling the application to enforce tenant-specific access and maintain strict data isolation across organizations.
+- **Tenant Isolation**: After a user signs up, a tenant identifier is sent to a Post Confirmation Lambda, which automatically assigns the user to the appropriate Cognito group. This ensures each user is linked to the correct tenant, enabling the application to enforce tenant-specific access and maintain strict data isolation across organizations
 
-### Horizontal Scalability
+### Scalability
 - **Auto-Scaling**: Usage of managed services for out of the box scaling
-- **Global Distribution**: Multi-region deployment capability
-- **Caching**: AppSync query result caching for improved performance
-- **HPA**: HPA for horizontal pod autoscaling 
+- **Multi-Environment Deployment**: Supports deployment across multiple environments and regions
+- **HPA**: Dynamically adjusts the number of pods based on CPU and memory usage
 
 ## 5. Technology Choices
 
@@ -189,8 +188,6 @@ flowchart LR
 | **Helm** | Managing kubernetes components lifecycle |
 
 ### Testing the implemenation
-This link contains a working prototype and skeleton implementation - [inventory-access-gateway](https://github.com/DevOpsDani/inventory-access-gateway)
-
 Under test-api folder we can run the ```query.sh``` script. 
 
 This simulates querying the service backend. 
