@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "inventory-access-gateway.fullname" . }}
+  labels:
+    app: {{ include "inventory-access-gateway.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "inventory-access-gateway.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "inventory-access-gateway.name" . }}
+    spec:
+      containers:
+        - name: {{ include "inventory-access-gateway.name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 5000
+          env:
+            - name: REGION
+              value: {{ .Values.env.REGION }}
+            - name: USER_POOL_ID
+              value: {{ .Values.env.USER_POOL_ID }}
+            - name: APP_CLIENT_ID
+              value: {{ .Values.env.APP_CLIENT_ID }}
+            - name: APPSYNC_API_URL
+              value: {{ .Values.env.APPSYNC_API_URL }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3

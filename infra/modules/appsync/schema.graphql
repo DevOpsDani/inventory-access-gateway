@@ -1,0 +1,9 @@
+type Item {
+  id: ID!
+  tenant: String!
+  data: AWSJSON
+}
+
+type Query {
+  getItems: [Item] @aws_auth(cognito_groups: ["example-client-tenant-dev"])
+}

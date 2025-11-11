@@ -1,0 +1,30 @@
+variable "api_name" {
+  description = "Name of the AppSync API"
+  type        = string
+}
+
+variable "user_pool_id" {
+  description = "Cognito User Pool ID"
+  type        = string
+}
+
+variable "region" {
+  description = "AWS region"
+  type        = string
+}
+
+variable "dynamodb_table_name" {
+  description = "DynamoDB table name"
+  type        = string
+}
+
+variable "dynamodb_table_arn" {
+  description = "DynamoDB table ARN"
+  type        = string
+}
+
+variable "aws_region" {
+  description = "AWS region for resources"
+  type        = string
+  default     = "us-west-2"
+}

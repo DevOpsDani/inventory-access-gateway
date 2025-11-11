@@ -1,0 +1,35 @@
+replicaCount: 2
+
+image:
+  repository: <Docker Repo>
+  tag: <Versoin>
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+env:
+  APP_CLIENT_ID: <Cognito App Client Id>
+  USER_POOL_ID: <Cognito User Pool Id>
+  REGION: us-west-2
+  APPSYNC_API_URL: <AppSync API URL>
+
+ingress:
+  enabled: true
+  className: alb
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/group.name: inventory-access-gateway-alb
+    alb.ingress.kubernetes.io/certificate-arn: <ACM>
+    alb.ingress.kubernetes.io/healthcheck-path: /health
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80

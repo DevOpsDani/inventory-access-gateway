@@ -1,0 +1,5 @@
+apiVersion: v2
+name: inventory-access-gateway
+description: Helm chart for Flask Cognito App
+version: 0.1.0
+appVersion: "1.0"
