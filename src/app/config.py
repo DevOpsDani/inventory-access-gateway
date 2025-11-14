@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv() Needed for local use
 
 class Config:
     REGION = os.getenv("REGION")

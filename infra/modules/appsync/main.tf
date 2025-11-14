@@ -8,6 +8,12 @@ resource "aws_appsync_graphql_api" "main" {
     default_action  = "ALLOW"
   }
 
+  log_config {
+    cloudwatch_logs_role_arn = aws_iam_role.appsync_role.arn
+    field_log_level          = "ERROR"
+    exclude_verbose_content  = true
+  }
+
   schema = file("${path.module}/schema.graphql")
 }
 
@@ -22,6 +28,11 @@ resource "aws_iam_role" "appsync_role" {
       Action    = "sts:AssumeRole"
     }]
   })
+}
+
+resource "aws_iam_role_policy_attachment" "logging_policy" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSAppSyncPushToCloudWatchLogs"
+  role       = aws_iam_role.appsync_role.name
 }
 
 resource "aws_iam_role_policy" "appsync_dynamodb_policy" {
