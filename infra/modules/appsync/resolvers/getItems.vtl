@@ -1,10 +1,11 @@
+#set($tenant = $ctx.identity.claims.get("cognito:groups")[0])
 {
   "version": "2017-02-28",
   "operation": "Query",
   "query": {
     "expression": "tenant = :tenant",
     "expressionValues": {
-      ":tenant": $util.dynamodb.toDynamoDBJson($ctx.identity.claims.get("cognito:groups")[0])
+      ":tenant": $util.dynamodb.toDynamoDBJson($tenant)
     }
   }
 }

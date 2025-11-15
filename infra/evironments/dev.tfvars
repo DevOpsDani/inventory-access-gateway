@@ -7,7 +7,8 @@ project     = "inventory-access-gateway"
 user_pool_name     = "inventory-gateway-users-dev"
 user_pool_domain   = "inventory-gateway-auth-dev"
 client_name        = "inventory-gateway-client-dev"
-cognito_user_group = "example-client-tenant-dev"
+cognito_user_group = "tenant-a-12345"
+callback_urls      = "https://google.com"
 
 # DynamoDB settings
 table_name = "inventory-gateway-db-table"
@@ -22,7 +23,7 @@ password_policy = {
   minimum_length    = 8
   require_lowercase = true
   require_numbers   = true
-  require_symbols   = false # Less strict for dev
+  require_symbols   = true
   require_uppercase = true
 }
 

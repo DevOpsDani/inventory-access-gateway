@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from .auth_utils import get_tenant_from_jwt
 import requests
 
 
@@ -24,26 +25,23 @@ def register_routes(app: Flask):
             "message": f"Data received successfully from {user}",
             "received": data
         })
-
+    
 
     @app.route("/query", methods=["POST"])
     def receive_data_per_tenant():
         data = request.get_json()
+
         if not data:
             return jsonify({"error": "Missing JSON body"}), 400
 
-        # Extract user info and groups
-        payload = getattr(request, "user", {})
-        username = payload.get("username", "unknown user")
-        groups = payload.get("cognito:groups", [])
-        auth_header = request.headers.get("Authorization", "")
-
         # Check if user is in group
-        if not groups:
-            return jsonify({"error": "User does not belong to any group"}), 403
+        tenants = get_tenant_from_jwt()
+        if not tenants:
+            return jsonify({"error": "User has no assigned tenant"}), 403
 
-        # Take the users first group as their tenant
-        tenant = groups[0]
+        # Get users first tenant and execute GraphQL query
+        tenant = tenants[0]
+        auth_header = request.headers.get("Authorization", "")
         jwt_token = auth_header.split(" ")[1]
         graphql_query = data["query"]
 
@@ -66,7 +64,7 @@ def register_routes(app: Flask):
                 }), response.status_code
 
             return jsonify({
-                "message": f"Query executed for tenant {tenant} by {username}",
+                "message": f"Query executed for tenant {tenant}",
                 "appsync_response": response.json()
             })
 

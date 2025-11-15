@@ -17,6 +17,7 @@ module "cognito" {
   user_pool_domain   = var.user_pool_domain
   client_name        = var.client_name
   cognito_user_group = var.cognito_user_group
+  callback_urls      = var.callback_urls
 
   # Environment and tagging
   environment = var.environment
@@ -43,5 +44,4 @@ module "appsync" {
   region              = var.aws_region
   dynamodb_table_name = module.dynamodb.table_name
   dynamodb_table_arn  = module.dynamodb.table_arn
-  callback_urls       = "callback-url.com"
 }

@@ -1,0 +1,9 @@
+#set($tenant = $ctx.identity.claims.get("cognito:groups")[0])
+{
+  "version": "2017-02-28",
+  "operation": "GetItem",
+  "key": {
+    "tenant": $util.dynamodb.toDynamoDBJson($tenant),
+    "id": $util.dynamodb.toDynamoDBJson($ctx.args.id)
+  }
+}
