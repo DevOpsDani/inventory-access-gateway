@@ -1,6 +1,6 @@
 import jwt
 from jwt import PyJWKClient
-from flask import current_app
+from flask import current_app, request, jsonify
 
 JWKS_CLIENT = None
 
@@ -48,6 +48,7 @@ def verify_cognito_token(token):
             return None
         
         return payload
+
         
     except jwt.ExpiredSignatureError:
         current_app.logger.error("Token has expired")
@@ -61,3 +62,16 @@ def verify_cognito_token(token):
     except Exception as e:
         current_app.logger.error(f"Token verification failed: {e}")
         return None
+    
+
+def get_tenant_from_jwt():
+    """
+    Return the tenant(s) from the JWT claims
+    """
+    payload = getattr(request, "user", {})
+    groups = payload.get("cognito:groups", [])
+    
+    if not groups:
+        return None
+
+    return groups

@@ -1,0 +1,5 @@
+#if($ctx.result)
+  $util.toJson($ctx.result)
+#else
+  $util.error("Item not found or you don't have permission to access it", "Unauthorized")
+#end

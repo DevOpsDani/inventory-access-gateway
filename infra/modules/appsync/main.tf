@@ -70,3 +70,14 @@ resource "aws_appsync_resolver" "query_items" {
   request_template  = file("${path.module}/resolvers/getItems.vtl")
   response_template = file("${path.module}/resolvers/response.vtl")
 }
+
+# Resolver for getting a specific item by ID
+resource "aws_appsync_resolver" "query_item" {
+  api_id      = aws_appsync_graphql_api.main.id
+  type        = "Query"
+  field       = "getItem"
+  data_source = aws_appsync_datasource.dynamodb.name
+
+  request_template  = file("${path.module}/resolvers/getItem.vtl")
+  response_template = file("${path.module}/resolvers/getItemResponse.vtl")
+}
