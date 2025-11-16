@@ -96,8 +96,10 @@ sequenceDiagram
 - **Multi-Factor Authentication**: Optional for enhanced security
 
 ### Authorization & RBAC
-- **User Groups**: Role-based access through Cognito User Groups
-- **AppSync Schema**: Fine-grained authorization using @aws_auth to ensure users can only query data allowed for their assigned group
+- **User Groups**: Role-based access through Cognito User Groups, where each tenant is represented as a Cognito group
+- **Backend Validation**: Python Flask application validates JWT tokens, verifies user group, and blocks unauthorized requests before reaching AppSync
+- **AppSync Schema**: Fine-grained authorization using AppSync VTL resolvers, enforcing tenant-based data isolation by extracting user groups from Cognito JWT
+- **DynamoDB**: DynamoDB uses `tenant` (partition key) and `id` (sort key) to enforce tenant boundaries at the database level, preventing cross-tenant data access
 
 ### Token Lifecycle Management
 - **Expiration**: Configurable token TTL (default: 1 hour access, 30 days refresh)
@@ -131,28 +133,33 @@ flowchart LR
 **Application Deployment Flow**:
 ```mermaid
 flowchart LR
-    subgraph "Code & CI"
-        A[Code Commit] --> B[Build Docker Image]
-        B --> C[Security & Compliance Scans]
-        C --> D[Push Approved Image]
+    subgraph "CI Pipeline"
+        A[Code Commit] --> B[Build & Test]
+        B --> C[Push Image<br/>Tag: commit-sha]
     end
 
-    subgraph "GitOps Lower Envs"
-        D --> E[Update Dev/Test GitOps Repo With latest tag]
-        E --> F[ArgoCD Sync & Deploy to Lower Envs]
-        F --> G[Integration & QA Tests]
+    subgraph "Dev Environment"
+        C --> D[Update GitOps Repo<br/>dev/values.yaml]
+        D --> E[ArgoCD Auto-Sync]
+        E --> F[Deploy to Dev]
     end
 
-    subgraph "Staging"
-        G --> H[Promote Image Tag to Staging GitOps]
-        H --> I[ArgoCD Sync & Deploy to Staging]
+    subgraph "Staging Environment"
+        F --> G[Promote Image Tag<br/>to staging/values.yaml]
+        G --> H[ArgoCD Sync]
+        H --> I[Deploy to Staging]
     end
 
     subgraph "Production"
-        I --> J[Manual or Auto Approval]
-        J --> K[Update Prod GitOps Repo]
-        K --> L[ArgoCD Sync & Deploy to Prod]
+        I --> J[Manual Approval]
+        J --> K[Update prod/values.yaml]
+        K --> L[ArgoCD Deploy to Prod]
     end
+
+    style C fill:#90EE90
+    style F fill:#87CEEB
+    style I fill:#FFD700
+    style L fill:#FF6B6B
 ```
 
 
@@ -160,9 +167,6 @@ flowchart LR
 - **Metrics**: CloudWatch custom metrics for API performance and usage
 - **Logging**: Collect and centralize application\appsync\cognito logs for monitoring and troubleshooting
 - **Alerting**: Automated alerts for error rates, latency, and security events
-
-### Secrets Management
-- **AWS Secrets Manager**: Securely store and manage database credentials, API keys, and other sensitive configuration data
 
 ## 4. Scalability & Extensibility
 
@@ -184,7 +188,7 @@ flowchart LR
 | **Amazon DynamoDB** | Serverless NoSQL database offering high availability, auto-scaling, and predictable performance for multi-tenant data storage. |
 | **Terraform** | Infrastructure as Code (IaC) tool ensuring consistent, version-controlled AWS resource provisioning. |
 | **Python Flask application** | Lightweight backend responsible for authenticating users, validating JWTs, and securely forwarding GraphQL queries to AppSync. |
-| **EKS** | Running the backend application, assuming this is the orchestarting system at Stream |
+| **EKS** | Running the backend application |
 | **Helm** | Managing kubernetes components lifecycle |
 
 ### Testing the implemenation
