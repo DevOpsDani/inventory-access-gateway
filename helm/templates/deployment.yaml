@@ -29,6 +29,13 @@ spec:
               value: {{ .Values.env.APP_CLIENT_ID }}
             - name: APPSYNC_API_URL
               value: {{ .Values.env.APPSYNC_API_URL }}
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
           livenessProbe:
             httpGet:
               path: /health
