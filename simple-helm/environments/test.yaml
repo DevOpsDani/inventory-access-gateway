@@ -1,0 +1,26 @@
+replicaCount: 1
+
+image:
+  repository: simple-api
+  tag: latest
+  pullPolicy: Never  # Use local images in Minikube
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi
+
+service:
+  type: NodePort
+  port: 80
+
+env: {}
+
+ingress:
+  enabled: false
+
+autoscaling:
+  enabled: false

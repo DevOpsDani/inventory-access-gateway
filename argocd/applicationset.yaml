@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: inventory-access-gateway
+  namespace: argocd
+spec:
+  generators:
+  - list:
+      elements:
+      - environment: test
+        namespace: test
+        valuesFile: test.yaml
+  template:
+    metadata:
+      name: 'inventory-access-gateway-{{environment}}'
+      labels:
+        environment: '{{environment}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/DevOpsDani/inventory-access-gateway.git
+        targetRevision: main  # or 'last-touch' for your current branch
+        path: simple-helm
+        helm:
+          valueFiles:
+          - environments/{{valuesFile}}
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true
