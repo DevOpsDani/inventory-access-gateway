@@ -1,7 +1,7 @@
 {{- define "inventory-access-gateway.name" -}}
-inventory-access-gateway
+simple-api
 {{- end -}}
 
 {{- define "inventory-access-gateway.fullname" -}}
-{{ include "inventory-access-gateway.name" . }}-{{ .Release.Name }}
+{{ .Release.Name }}
 {{- end -}}
